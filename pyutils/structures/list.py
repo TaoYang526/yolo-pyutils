@@ -1,4 +1,9 @@
 
+def sort_by_key(info_list, sort_key, reverse=False):
+    def get_value(info):
+        return info.get(sort_key)
+    info_list.sort(key=get_value, reverse=reverse)
+
 
 # deduplicate rows
 # change rows from

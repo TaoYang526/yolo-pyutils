@@ -1,18 +1,9 @@
 import importlib
 
-CONF_KEY_CLASS = "class"
-CONF_KEY_INIT_ARGS = "args"
 reflect_cache = {}
 
 
-def generate_instance(clazz_dict, init_args_origin_dict):
-    clazz = clazz_dict.get(CONF_KEY_CLASS)
-    if clazz is None:
-        raise RuntimeError("'{}' field is required".format(CONF_KEY_CLASS))
-    init_args_dict = init_args_origin_dict
-    init_args = clazz_dict.get(CONF_KEY_INIT_ARGS)
-    if init_args is not None:
-        init_args_dict.update(init_args)
+def generate_instance(clazz, init_args_dict):
     constructor_fn = reflect_fn(clazz)
     return constructor_fn(**init_args_dict)
 
