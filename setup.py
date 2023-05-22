@@ -8,7 +8,7 @@ def read(file_name):
 
 setup(
     name="yolo-pyutils",
-    version="0.1.29",
+    version="0.1.31",
     author="Tao Yang",
     author_email="ytaofighting@gmail.com",
     description="yolo-pyutils provides utility functions for IO, data-processing, scheduling, common structures etc.",

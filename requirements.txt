@@ -7,3 +7,4 @@ apscheduler
 imapclient
 Flask
 Flask-Mail
+GitPython

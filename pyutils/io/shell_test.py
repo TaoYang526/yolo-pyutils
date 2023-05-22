@@ -3,7 +3,7 @@ from pyutils.io.shell import run
 import codecs
 
 
-class TestRecovery(unittest.TestCase):
+class TestShell(unittest.TestCase):
 
     def test_execute_cmd(self):
         stdout, stderr = run("echo xxx")

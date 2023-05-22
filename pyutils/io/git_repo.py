@@ -11,8 +11,8 @@ class GitRepo:
         self.repo = None
 
     def init(self, repo_local_dir, auto_clone=True):
-        # if already have directory
         if os.path.exists(repo_local_dir):
+            # reuse if already have directory
             repo = git.Repo(repo_local_dir)
         elif auto_clone:
             repo = git.Repo.clone_from(url=self.url, to_path=repo_local_dir)
@@ -60,7 +60,7 @@ class GitRepo:
         # create local branch from remote base branch
         base_branch = self.get_remote_branch(base_branch_name)
         head = self.repo.create_head(new_branch_name, base_branch)
-        return self.get_remote().push(head)
+        self.get_remote().push(head)
 
     def checkout_remote_branch(self, branch_name):
         ref = self.get_remote_branch(branch_name)
@@ -73,3 +73,21 @@ class GitRepo:
             # create head from remote if not present
             self.repo.create_head(branch_name, ref).set_tracking_branch(ref).checkout()
         self.get_remote().pull()
+
+    def create_remote_tag(self, branch_name, tag_name):
+        tag = self.repo.create_tag(tag_name, ref=self.repo.heads[branch_name])
+        self.get_remote().push(tag.path)
+
+    def get_tag_reference(self, tag_name):
+        # get remote connection, raise IndexError: No item found with id '...' if failed
+        for tag_ref in self.repo.tags:
+            if tag_ref.name == tag_name:
+                return tag_ref
+        return None
+
+    def remove_remote_tag(self, tag_name):
+        tag_ref = self.get_tag_reference(tag_name)
+        if tag_ref:
+            self.repo.delete_tag(tag_ref)
+            self.get_remote().push(f':{tag_ref.path}')
+        return tag_ref
