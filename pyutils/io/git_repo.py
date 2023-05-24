@@ -74,6 +74,9 @@ class GitRepo:
             self.repo.create_head(branch_name, ref).set_tracking_branch(ref).checkout()
         self.get_remote().pull()
 
+    def checkout_tag(self, tag_name):
+        self.repo.git.checkout(tag_name)
+
     def create_remote_tag(self, branch_name, tag_name):
         tag = self.repo.create_tag(tag_name, ref=self.repo.heads[branch_name])
         self.get_remote().push(tag.path)
