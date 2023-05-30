@@ -94,3 +94,10 @@ class GitRepo:
             self.repo.delete_tag(tag_ref)
             self.get_remote().push(f':{tag_ref.path}')
         return tag_ref
+
+    def commit(self, branch_name, args):
+        self.checkout_remote_branch(branch_name)
+        self.repo.git.commit(*args)
+
+    def push(self):
+        self.get_remote().push()

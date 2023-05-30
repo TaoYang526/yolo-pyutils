@@ -52,9 +52,32 @@ class TestGitRepo(unittest.TestCase):
         self.git_repo.remove_remote_tag(tag_name)
         tag_ref = self.git_repo.get_tag_reference(tag_name)
         self.assertIsNone(tag_ref, f"expected to not get tag {tag_name}")
+        # cleanup
+        removed_branch = self.git_repo.remove_remote_branch(branch_name)
+        self.assertIsNotNone(removed_branch, "failed to remove branch, removed_branch={}".format(removed_branch))
 
-        # remove branch
-        self.git_repo.remove_remote_branch(branch_name)
+    def test_new_commit(self):
+        branch_name = 'release-0.2'
+        fetched_branch = self.git_repo.get_remote_branch(branch_name)
+        if fetched_branch:
+            # remove test branch if existing
+            print(f'branch {branch_name} is existing, trigger removing it')
+            removed_branch = self.git_repo.remove_remote_branch(branch_name)
+            self.assertIsNotNone(removed_branch, "failed to remove branch, removed_branch={}".format(removed_branch))
+            fetched_branch = self.git_repo.get_remote_branch(branch_name)
+            self.assertIsNone(fetched_branch, "failed to remove branch, fetched_branch={}".format(fetched_branch))
+        print(f'create new branch {branch_name} ...')
+        # create new branch
+        self.git_repo.create_remote_branch(branch_name, 'master')
+        # commit empty message
+        self.git_repo.commit(branch_name, ['-m', 'empty commit', '--allow-empty'])
+        self.git_repo.push()
+        # get last commit
+        last_commit = self.git_repo.get_last_commit()
+        self.assertTrue(last_commit['message'].startswith('empty commit'))
+        # cleanup
+        removed_branch = self.git_repo.remove_remote_branch(branch_name)
+        self.assertIsNotNone(removed_branch, "failed to remove branch, removed_branch={}".format(removed_branch))
 
 
 if __name__ == "__main__":
